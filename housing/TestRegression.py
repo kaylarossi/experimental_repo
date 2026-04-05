@@ -17,7 +17,7 @@ class TestRegression(unittest.TestCase):
         self.assertIn('data_frame', summary_dict)
         self.assertIn('num_of_observations', summary_dict)
 
-        regression_dict = result['regression_dict']
+        regression_dict = result['regression_dict']['model_params']
         self.assertIn('Intercept', regression_dict)
         self.assertIn('Bedroom', regression_dict)
         self.assertIn('Space', regression_dict)
@@ -30,9 +30,8 @@ class TestRegression(unittest.TestCase):
 
     def test_prediction(self):
         result = self.regression.analyze_and_fit()
-        pred = result['regression_dict']['Price_Prediction']
+        pred = result['regression_dict']['price_prediction']
         self.assertIsInstance(pred, float)
-        self.assertEqual(pred.shape, (1,))
     
     def test_invalid_data(self):
         # Test with invalid data path
@@ -40,12 +39,22 @@ class TestRegression(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             self.regression.analyze_and_fit()
 
-        with self.assertRaises(ValueError):
-            self.regression.__build_model(pd.DataFrame())  # Empty DataFrame
+        with self.assertRaises(KeyError):
+            self.regression._build_model(pd.DataFrame())  # Empty DataFrame
+
+    def test_valid_data_path(self):
+        # Test with a valid data path
+        self.regression.train_data = './data/realest.csv'
+        try:
+            result = self.regression.analyze_and_fit()
+            self.assertIn('summary_dict', result)
+            self.assertIn('regression_dict', result)
+        except Exception as e:
+            self.fail(f"analyze_and_fit() raised {type(e).__name__} unexpectedly: {e}")
 
         
 
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(exit=False)

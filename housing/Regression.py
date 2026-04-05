@@ -7,28 +7,28 @@ from sklearn.linear_model import LinearRegression
 class DataAndFitLinearRegression:
     def __init__(self):
         self.version = 1
-        self.train_data = './housing.csv'
+        self.train_data = './data/realest.csv'
         self.inf_data = './inf_config.json'
         self.model = None
         self.feature_names = None
 
     def analyze_and_fit(self):
         data = pd.read_csv(self.train_data)
-        summary_dict = self.__build_summary_dict(data)
+        summary_dict = self._build_summary_dict(data)
         data = self.__listwise_deletion(data)
-        model, feature_names = self.__build_model(data)
-        regression_dict = self.__build_regression_dict()
+        model, feature_names = self._build_model(data)
+        regression_dict = self._build_regression_dict()
         return {
             'summary_dict': summary_dict,
             'regression_dict': regression_dict
         }
 
 
-    def __build_summary_dict(self, data: pd.DataFrame):
+    def _build_summary_dict(self, data: pd.DataFrame):
         # return 3 elements - statistics, data_frame, num_of_observations
         # tax for all houses with 2 bathrooms and 4 bedrooms
-        filtered = data[(data['bathrooms']==2) & (data['bedrooms']==4)]
-        tax = filtered['tax']
+        filtered = data[(data['Bathroom']==2) & (data['Bedroom']==4)]
+        tax = filtered['Tax']
         statistics = [
             tax.mean(),
             tax.std(),
@@ -50,7 +50,7 @@ class DataAndFitLinearRegression:
             'num_of_observations': num_of_observations
         }
     
-    def __build_model(self, data: pd.DataFrame):
+    def _build_model(self, data: pd.DataFrame):
         target = data['Price']
         X = data.drop(columns=['Price'])
         y = target
@@ -61,7 +61,7 @@ class DataAndFitLinearRegression:
         self.feature_names = feature_names
         return model, feature_names
 
-    def __build_regression_dict(self):
+    def _build_regression_dict(self):
         with open(self.inf_data, 'r') as f:
             inference_data = json.load(f)
         model_params = {
