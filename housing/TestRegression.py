@@ -5,7 +5,7 @@ import pandas as pd
 
 class TestRegression(unittest.TestCase):
     def setUp(self):
-        self.regression = DataAndFitLinearRegression()
+        self.regression = DataAndFitLinearRegression() 
 
     def test_analyze_and_fit(self):
         result = self.regression.analyze_and_fit()
